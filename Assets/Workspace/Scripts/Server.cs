@@ -4,7 +4,7 @@ using UnityEngine.Assertions;
 using Unity.Collections;
 using Unity.Networking.Transport;
 
-public class ServerBehaviour : MonoBehaviour
+public class Server : MonoBehaviour
 {
     public const int PORT = 9000;
     public const int MAX_CONNECTIONS = 16;

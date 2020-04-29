@@ -4,7 +4,7 @@ using UnityEngine.Assertions;
 using Unity.Collections;
 using Unity.Networking.Transport;
 
-public class ClientBehaviour : MonoBehaviour
+public class Client : MonoBehaviour
 {
     public const int PORT = 9000;
 
