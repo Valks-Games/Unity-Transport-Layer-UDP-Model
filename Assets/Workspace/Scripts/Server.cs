@@ -6,7 +6,8 @@ using Unity.Networking.Transport;
 
 public class Server : MonoBehaviour
 {
-    public const int PORT = 9000;
+    public const string ADDRESS = "142.161.93.165";
+    public const int PORT = 7777;
     public const int MAX_CONNECTIONS = 16;
 
     public NetworkDriver Driver;
