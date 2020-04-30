@@ -3,7 +3,21 @@
 Learning the Unity Transport Layer in hopes of pursuing multiplayer development on a large modular scale.
 
 ## Setup
-Unity Stable 2019.3.11f1 Personal <DX11>
+### Version
+Both server and client use Unity Stable 2019.3.11f1 Personal <DX11>
+  
+### Server
+Remember to check off `Server Build` option in build settings.
+
+```bash
+@ECHO OFF
+MODE 100,25
+echo Server is up and running!
+Server.exe -batchmode -nographics -logFile PATH\log.txt # Replace PATH with path to project directory
+```
+
+### Client
+Standalone
   
 ## Contributing
 [CONTRIBUTING.md](https://github.com/valkyrienyanko/Prototype/blob/master/.github/CONTRIBUTING.md)
