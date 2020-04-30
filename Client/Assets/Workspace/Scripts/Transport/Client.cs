@@ -17,27 +17,27 @@ public class Client : MonoBehaviour
     public NetworkDriver Driver;
     public NetworkConnection Connection;
 
-    void Start() 
+    void Start()
     {
         DontDestroyOnLoad(gameObject);
 
-        Driver = NetworkDriver.Create(new NetworkConfigParameter{disconnectTimeoutMS = DISCONNECT_TIMEOUT});
+        Driver = NetworkDriver.Create(new NetworkConfigParameter { disconnectTimeoutMS = DISCONNECT_TIMEOUT });
         Connection = default(NetworkConnection);
     }
 
-    public void Connect() 
+    public void Connect()
     {
         Debug.Log("Attempting to connect to server.");
         var endpoint = NetworkEndPoint.Parse(ADDRESS, PORT);
         Connection = Driver.Connect(endpoint);
     }
 
-    void OnDestroy() 
+    void OnDestroy()
     {
         Driver.Dispose();
     }
 
-    void Update() 
+    void Update()
     {
         Driver.ScheduleUpdate().Complete();
 
@@ -45,9 +45,9 @@ public class Client : MonoBehaviour
 
         DataStreamReader stream;
         NetworkEvent.Type cmd;
-        while ((cmd = Connection.PopEvent(Driver, out stream)) != NetworkEvent.Type.Empty) 
+        while ((cmd = Connection.PopEvent(Driver, out stream)) != NetworkEvent.Type.Empty)
         {
-            if (cmd == NetworkEvent.Type.Connect) 
+            if (cmd == NetworkEvent.Type.Connect)
             {
                 Debug.Log("We are now connected to the server.");
 
@@ -66,13 +66,15 @@ public class Client : MonoBehaviour
 
                 writer.WriteBytes(array);
                 Driver.EndSend(writer);
-            } else if (cmd == NetworkEvent.Type.Data) 
+            }
+            else if (cmd == NetworkEvent.Type.Data)
             {
                 /*uint value = stream.ReadUInt();
                 Debug.Log("Got the value = " + value + " back from the server.");
                 Connection.Disconnect(Driver);
                 Connection = default(NetworkConnection); // Reset connection*/
-            } else if (cmd == NetworkEvent.Type.Disconnect) 
+            }
+            else if (cmd == NetworkEvent.Type.Disconnect)
             {
                 Debug.Log("Client got disconnected from server.");
                 Connection = default(NetworkConnection);

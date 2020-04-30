@@ -20,7 +20,10 @@ public class Server : MonoBehaviour
     {
         Application.targetFrameRate = 60;
         DontDestroyOnLoad(gameObject);
+    }
 
+    void InitializeNetwork() 
+    {
         // Creating Driver without any params
         Driver = NetworkDriver.Create(new NetworkConfigParameter{disconnectTimeoutMS=DISCONNECT_TIMEOUT});
         var endpoint = NetworkEndPoint.AnyIpv4;
