@@ -1,6 +1,9 @@
 # Contributing
-## Setup
-Requires Unity Stable <2019.3.12f1> or later.
+## Getting Started
+1. Download the latest Unity Official Release (Current Version Unity <2019.3.12f1>) through Unity Hub
+2. Add both the server and client Unity Projects to Unity Hub and launch them
+3. Build the client and server as standalones
+4. Test out the builds
 
 ## Documentation
 [Unity Scripting Reference](https://docs.unity3d.com/ScriptReference/)  
