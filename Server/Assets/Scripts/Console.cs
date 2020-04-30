@@ -58,17 +58,16 @@ public class Console : MonoBehaviour
 
         switch (args[0])
         {
+            case "say":
+            break;
             case "kick":
             if (args.Length <= 1) 
             {
-                Print("Error: Command kick requires <user> to kick", Color.red);
+                Print("Error: Command kick requires <user> to kick", new Color(1f, 0.75f, 0.75f, 1f));
                 return;
             }
 
             Print("Kicked " + args[0]);
-            break;
-            case "start":
-
             break;
             case "exit":
             Application.Quit();
@@ -76,7 +75,7 @@ public class Console : MonoBehaviour
             default:
             if (!args[0].Equals("")) 
             {
-                Print("Error: Unknown command \"" + args[0] + "\"", Color.red);
+                Print("Error: Unknown command \"" + args[0] + "\"", new Color(1f, 0.75f, 0.75f, 1f));
                 return;
             }
             break;
@@ -89,6 +88,15 @@ public class Console : MonoBehaviour
         UIInputField.Select();
         UIInputField.ActivateInputField();
 
-        ContentRectTransform.anchoredPosition = new Vector2(0, -Screen.height + PADDING);
+        ContentRectTransform.anchoredPosition = new Vector2(10, -Screen.height + PADDING);
+    }
+
+    void Update() 
+    {
+        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return)) 
+        {
+            UIInputField.Select();
+            UIInputField.ActivateInputField();
+        }
     }
 }
