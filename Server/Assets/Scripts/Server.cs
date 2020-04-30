@@ -8,7 +8,6 @@ using Unity.Networking.Transport;
 
 public class Server : MonoBehaviour
 {
-    public const string ADDRESS = "142.161.93.165";
     public const int PORT = 7777;
     public const int MAX_CONNECTIONS = 16;
     public const int DISCONNECT_TIMEOUT = 30000;
@@ -29,6 +28,10 @@ public class Server : MonoBehaviour
         Application.targetFrameRate = 60;
         DontDestroyOnLoad(gameObject);
 
+        // for debugging lines
+        //Console.Log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        //Console.Log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+
         StartServer();
     }
 
@@ -37,7 +40,7 @@ public class Server : MonoBehaviour
         Console.Log("Starting server...");
 
         // Creating Driver without any params
-        Driver = NetworkDriver.Create(new NetworkConfigParameter{disconnectTimeoutMS=DISCONNECT_TIMEOUT});
+        Driver = NetworkDriver.Create();
         var endpoint = NetworkEndPoint.AnyIpv4;
         endpoint.Port = PORT;
         if (Driver.Bind(endpoint) != 0) 
@@ -95,6 +98,7 @@ public class Server : MonoBehaviour
         {
             connections.Add(c);
             Debug.Log("Accepted a connection");
+            Console.Log(c.InternalId + " connected");
         }
 
         // Query Driver for events that might have happened since last update
@@ -106,10 +110,7 @@ public class Server : MonoBehaviour
             NetworkEvent.Type cmd;
             while ((cmd = Driver.PopEventForConnection(connections[i], out streamReader)) != NetworkEvent.Type.Empty) 
             {
-                if (cmd == NetworkEvent.Type.Connect) 
-                {
-                    Console.Log(c.IsCreated + " connected");
-                } else if (cmd == NetworkEvent.Type.Data) 
+                if (cmd == NetworkEvent.Type.Data) 
                 {
                     byte[] recBuffer = new byte[streamReader.Length];
                     var array = new NativeArray<byte>(recBuffer, Allocator.Temp);

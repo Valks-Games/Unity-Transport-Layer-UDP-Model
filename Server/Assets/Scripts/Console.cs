@@ -18,7 +18,7 @@ public class Console : MonoBehaviour
     private ScrollRect UIScrollRect;
     private InputField UIInputField;
     private RectTransform ContentRectTransform;
-    private List<GameObject> ConsoleLines = new List<GameObject>();
+    private List<GameObject> ConsoleMessages = new List<GameObject>();
 
     void Awake() 
     {
@@ -40,18 +40,41 @@ public class Console : MonoBehaviour
     public void Log(string message, Color color) 
     {
         GameObject goText = Instantiate(GoTextPrefab, GoContent.transform);
-        goText.transform.Translate(new Vector3(0, -20 * ConsoleLines.Count, 0));
+        RectTransform goTextRect = goText.GetComponent<RectTransform>();
         Text text = goText.GetComponent<Text>();
+
         text.text = message;
         text.color = color;
-
-        ContentRectTransform.Translate(new Vector3(0, -20 / 2 * (ConsoleLines.Count), 0));
-        ContentRectTransform.sizeDelta = new Vector2(0, (20 * (ConsoleLines.Count + 1)));
         
-        ConsoleLines.Add(goText);
+        int lines = CalcLines(text.preferredWidth, goTextRect.rect.width);
+
+        // Offset text
+        Debug.Log(ConsoleMessages.Count);
+        Debug.Log(lines);
+        goText.transform.Translate(new Vector3(0, -20 * (ConsoleMessages.Count + lines), 0));
+        // Resize text
+        goTextRect.sizeDelta = new Vector2(goTextRect.sizeDelta.x, 20 * lines);
+
+        // Offset content box
+        ContentRectTransform.Translate(new Vector3(0, -20 / 2 * (ConsoleMessages.Count + lines), 0));
+        // Resize content box
+        ContentRectTransform.sizeDelta = new Vector2(0, (20 * (ConsoleMessages.Count + lines)));
+        
+        ConsoleMessages.Add(goText); // Add message to list
 
         ResetInput();
         FocusInput();
+    }
+
+    int CalcLines(float contentWidth, float lineWidth) 
+    {
+        int lines = 1;
+        while (contentWidth > lineWidth) 
+        {
+            contentWidth -= lineWidth;
+            lines++;
+        }
+        return lines;
     }
 
     public void HandleInput() 
@@ -64,7 +87,14 @@ public class Console : MonoBehaviour
 
         switch (args[0])
         {
-            case "say":
+            case "help":
+            Log("Commands: broadcast, list, kick, status, start, stop, restart, exit");
+            break;
+            case "broadcast":
+            // Broadcast message to game server. Alias: ['say']
+            break;
+            case "list":
+            // List all players in the server. Alias: ['players']
             break;
             case "kick":
             if (args.Length <= 1) 
@@ -74,6 +104,15 @@ public class Console : MonoBehaviour
             }
 
             Log("Kicked " + args[0]);
+            break;
+            case "status":
+            if (Server.IsRunning()) 
+            {
+                Log("Server is online.");
+            } else 
+            {
+                Log("Server is offline.");
+            }
             break;
             case "start":
             if (!Server.IsRunning()) 
@@ -131,7 +170,7 @@ public class Console : MonoBehaviour
 
     void Update() 
     {
-        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return)) 
+        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Escape)) 
         {
             FocusInput();
         }

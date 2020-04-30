@@ -21,7 +21,7 @@ public class Client : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
 
-        Driver = NetworkDriver.Create(new NetworkConfigParameter { disconnectTimeoutMS = DISCONNECT_TIMEOUT });
+        Driver = NetworkDriver.Create();
         Connection = default(NetworkConnection);
     }
 
@@ -78,6 +78,8 @@ public class Client : MonoBehaviour
             {
                 Debug.Log("Client got disconnected from server.");
                 Connection = default(NetworkConnection);
+
+                SceneManager.LoadScene("Server Listings");
             }
         }
     }
