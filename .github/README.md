@@ -3,9 +3,6 @@
 Learning the Unity Transport Layer in hopes of pursuing multiplayer development on a large modular scale.
 
 ## Setup
-### Version
-Both server and client use Unity Stable 2019.3.11f1 Personal <DX11>
-  
 ### Server
 Remember to check off `Server Build` option in build settings.
 
