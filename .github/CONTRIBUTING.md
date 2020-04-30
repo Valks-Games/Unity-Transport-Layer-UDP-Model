@@ -10,4 +10,4 @@
 - [Unity Transport Layer](https://docs.unity3d.com/Packages/com.unity.transport@0.3/api/Unity.Networking.Transport.html)
 
 ## How to Contribute
-Please send **valk#3277** a message over Discord.
+Contact **valk#3277** over Discord.
