@@ -154,7 +154,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -545.5}
+  m_AnchoredPosition: {x: 0, y: -350.5}
   m_SizeDelta: {x: -20, y: 20}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &8324843
@@ -176,7 +176,7 @@ GameObject:
   - component: {fileID: 225381829}
   - component: {fileID: 225381828}
   m_Layer: 0
-  m_Name: UI
+  m_Name: Console
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -904,6 +904,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 693866acdda09024cbc4419ea0eb0808, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GoConsole: {fileID: 225381827}
 --- !u!4 &1533923554
 Transform:
   m_ObjectHideFlags: 0

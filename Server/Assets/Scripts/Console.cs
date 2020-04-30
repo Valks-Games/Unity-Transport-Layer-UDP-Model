@@ -27,12 +27,17 @@ public class Console : MonoBehaviour
         ContentRectTransform = GoContent.GetComponent<RectTransform>();
     }
 
-    void Print(string message) 
+    void Start() 
     {
-        Print(message, Color.white);
+        FocusInput();
     }
 
-    void Print(string message, Color color) 
+    public void Log(string message) 
+    {
+        Log(message, Color.white);
+    }
+
+    public void Log(string message, Color color) 
     {
         GameObject goText = Instantiate(GoTextPrefab, GoContent.transform);
         goText.transform.Translate(new Vector3(0, -20 * ConsoleLines.Count, 0));
@@ -46,6 +51,7 @@ public class Console : MonoBehaviour
         ConsoleLines.Add(goText);
 
         ResetInput();
+        FocusInput();
     }
 
     public void HandleInput() 
@@ -63,11 +69,21 @@ public class Console : MonoBehaviour
             case "kick":
             if (args.Length <= 1) 
             {
-                Print("Error: Command kick requires <user> to kick", new Color(1f, 0.75f, 0.75f, 1f));
+                Log("Error: Command kick requires <user> to kick", new Color(1f, 0.75f, 0.75f, 1f));
                 return;
             }
 
-            Print("Kicked " + args[0]);
+            Log("Kicked " + args[0]);
+            break;
+            case "start":
+            if (!Server.IsRunning()) 
+            {
+                Server.StartServer();
+            } 
+            else 
+            {
+                Log("Server is already running.", new Color(1f, 0.75f, 0.75f, 1f));
+            }
             break;
             case "exit":
             Application.Quit();
@@ -75,8 +91,7 @@ public class Console : MonoBehaviour
             default:
             if (!args[0].Equals("")) 
             {
-                Print("Error: Unknown command \"" + args[0] + "\"", new Color(1f, 0.75f, 0.75f, 1f));
-                return;
+                Log("Error: Unknown command \"" + args[0] + "\"", new Color(1f, 0.75f, 0.75f, 1f));
             }
             break;
         }
@@ -85,18 +100,20 @@ public class Console : MonoBehaviour
     void ResetInput() 
     {
         UIInputField.text = "";
+        ContentRectTransform.anchoredPosition = new Vector2(10, -Screen.height + PADDING);
+    }
+
+    void FocusInput() 
+    {
         UIInputField.Select();
         UIInputField.ActivateInputField();
-
-        ContentRectTransform.anchoredPosition = new Vector2(10, -Screen.height + PADDING);
     }
 
     void Update() 
     {
         if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return)) 
         {
-            UIInputField.Select();
-            UIInputField.ActivateInputField();
+            FocusInput();
         }
     }
 }

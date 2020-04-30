@@ -13,8 +13,16 @@ public class Server : MonoBehaviour
     public const int MAX_CONNECTIONS = 16;
     public const int DISCONNECT_TIMEOUT = 30000;
 
+    public GameObject GoConsole;
+    private Console Console;
+
     public NetworkDriver Driver;
     private NativeList<NetworkConnection> connections;
+
+    void Awake() 
+    {
+        Console = GoConsole.GetComponent<Console>();
+    }
 
     void Start()
     {
@@ -26,16 +34,29 @@ public class Server : MonoBehaviour
 
     public void StartServer() 
     {
+        Console.Log("Starting server...");
+
         // Creating Driver without any params
         Driver = NetworkDriver.Create(new NetworkConfigParameter{disconnectTimeoutMS=DISCONNECT_TIMEOUT});
         var endpoint = NetworkEndPoint.AnyIpv4;
         endpoint.Port = PORT;
-        if (Driver.Bind(endpoint) != 0)
+        if (Driver.Bind(endpoint) != 0) 
+        {
             Debug.Log("Failed to bind to port " + PORT);
-        else
+        }
+        else 
+        {
             Driver.Listen(); // Sets the NetworkDriver in the Listen state
+        }
         
         connections = new NativeList<NetworkConnection>(MAX_CONNECTIONS, Allocator.Persistent);
+
+        Console.Log("Server is up and running!");
+    }
+
+    public bool IsRunning()
+    {
+        return Driver.IsCreated;
     }
 
     void OnDestroy() 
@@ -47,6 +68,9 @@ public class Server : MonoBehaviour
 
     void Update()
     {
+        if (!Driver.IsCreated)
+            return;
+
         Driver.ScheduleUpdate().Complete();
 
         // Clean up old connections
@@ -76,7 +100,10 @@ public class Server : MonoBehaviour
             NetworkEvent.Type cmd;
             while ((cmd = Driver.PopEventForConnection(connections[i], out streamReader)) != NetworkEvent.Type.Empty) 
             {
-                if (cmd == NetworkEvent.Type.Data) 
+                if (cmd == NetworkEvent.Type.Connect) 
+                {
+                    Console.Log(c.IsCreated + " connected");
+                } else if (cmd == NetworkEvent.Type.Data) 
                 {
                     byte[] recBuffer = new byte[streamReader.Length];
                     var array = new NativeArray<byte>(recBuffer, Allocator.Temp);
@@ -98,6 +125,7 @@ public class Server : MonoBehaviour
                 } else if (cmd == NetworkEvent.Type.Disconnect) 
                 {
                     Debug.Log("Client diconnected from the server.");
+                    Console.Log(c.InternalId + " disconnected");
                     connections[i] = default(NetworkConnection); // Reset connection
                 }
             }
