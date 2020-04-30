@@ -17,6 +17,7 @@ public class Server : MonoBehaviour
 
     void Start()
     {
+        Application.targetFrameRate = 60;
         DontDestroyOnLoad(gameObject);
 
         // Creating Driver without any params

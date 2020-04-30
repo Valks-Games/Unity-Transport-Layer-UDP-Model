@@ -67,10 +67,10 @@ public class Client : MonoBehaviour
                 Driver.EndSend(writer);
             } else if (cmd == NetworkEvent.Type.Data) 
             {
-                uint value = stream.ReadUInt();
+                /*uint value = stream.ReadUInt();
                 Debug.Log("Got the value = " + value + " back from the server.");
                 Connection.Disconnect(Driver);
-                Connection = default(NetworkConnection); // Reset connection
+                Connection = default(NetworkConnection); // Reset connection*/
             } else if (cmd == NetworkEvent.Type.Disconnect) 
             {
                 Debug.Log("Client got disconnected from server.");
