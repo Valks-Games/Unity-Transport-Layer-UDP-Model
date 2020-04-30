@@ -1345,8 +1345,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1410862923}
   - component: {fileID: 1410862922}
+  - component: {fileID: 1410862924}
   m_Layer: 0
-  m_Name: UI Listener
+  m_Name: UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1379,6 +1380,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1410862924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1410862921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e8bf2f84f83c6c4f8e0ef8949ca891c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &1479736248 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4647612787380575926, guid: b6788f77601ddbf4faa851d679613e95,

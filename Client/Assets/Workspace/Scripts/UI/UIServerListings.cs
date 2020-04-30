@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ServerListings : MonoBehaviour
+public class UIServerListings : MonoBehaviour
 {
     public GameObject client;
 

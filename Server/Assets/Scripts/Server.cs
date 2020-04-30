@@ -17,6 +17,8 @@ public class Server : MonoBehaviour
 
     void Start()
     {
+        DontDestroyOnLoad(gameObject);
+
         // Creating Driver without any params
         Driver = NetworkDriver.Create();
         var endpoint = NetworkEndPoint.AnyIpv4;
@@ -69,12 +71,12 @@ public class Server : MonoBehaviour
             {
                 if (cmd == NetworkEvent.Type.Data) 
                 {
-                    byte[] bytes = new byte[16]; // Could not think of a better name
-                    var array = new NativeArray<byte>(bytes, Allocator.Temp);
+                    byte[] recBuffer = new byte[streamReader.Length];
+                    var array = new NativeArray<byte>(recBuffer, Allocator.Temp);
 
                     streamReader.ReadBytes(array);
-
-                    byte[] recBuffer = array.ToArray();
+                    Debug.Log("ID: " + connections[0].InternalId);
+                    recBuffer = array.ToArray();
 
                     if (recBuffer[0] == 5) // Position Data
                     {

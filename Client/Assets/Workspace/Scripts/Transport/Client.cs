@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Assertions;
 
 using Unity.Collections;
@@ -17,6 +18,8 @@ public class Client : MonoBehaviour
 
     void Start() 
     {
+        DontDestroyOnLoad(gameObject);
+
         Driver = NetworkDriver.Create();
         Connection = default(NetworkConnection);
     }
@@ -47,8 +50,9 @@ public class Client : MonoBehaviour
             {
                 Debug.Log("We are now connected to the server.");
 
-                var writer = Driver.BeginSend(Connection);
+                SceneManager.LoadScene("Main");
 
+                var writer = Driver.BeginSend(Connection);
                 Vector3 pos = new Vector3(100, 500, 30);
 
                 byte[] buffer = new byte[16];
