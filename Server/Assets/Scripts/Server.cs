@@ -54,6 +54,12 @@ public class Server : MonoBehaviour
         Console.Log("Server is up and running!");
     }
 
+    public void StopServer() 
+    {
+        Driver.Dispose();
+        Console.Log("Stopped server.");
+    }
+
     public bool IsRunning()
     {
         return Driver.IsCreated;

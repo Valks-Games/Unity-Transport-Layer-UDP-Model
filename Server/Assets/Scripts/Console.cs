@@ -34,7 +34,7 @@ public class Console : MonoBehaviour
 
     public void Log(string message) 
     {
-        Log(message, Color.white);
+        Log(message, new Color(0.6f, 0.6f, 0.6f, 1.0f));
     }
 
     public void Log(string message, Color color) 
@@ -60,7 +60,7 @@ public class Console : MonoBehaviour
             return;
         
         string input = UIInputField.text;
-        string[] args = input.Split();
+        string[] args = input.ToLower().Split();
 
         switch (args[0])
         {
@@ -83,6 +83,26 @@ public class Console : MonoBehaviour
             else 
             {
                 Log("Server is already running.", new Color(1f, 0.75f, 0.75f, 1f));
+            }
+            break;
+            case "stop":
+            if (Server.IsRunning()) 
+            {
+                Server.StopServer();
+            } 
+            else 
+            {
+                Log("Server is not running.");
+            }
+            break;
+            case "restart":
+            if (!Server.IsRunning()) 
+            {
+                Log("Server needs to be running to restart.");
+            } else 
+            {
+                Server.StopServer();
+                Server.StartServer();
             }
             break;
             case "exit":
