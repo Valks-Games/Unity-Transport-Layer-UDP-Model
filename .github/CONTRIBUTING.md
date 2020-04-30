@@ -6,8 +6,8 @@
 4. Test out the builds
 
 ## Documentation
-[Unity Scripting Reference](https://docs.unity3d.com/ScriptReference/)  
-[Unity Transport Layer](https://docs.unity3d.com/Packages/com.unity.transport@0.3/api/Unity.Networking.Transport.html)
+- [Unity Scripting Reference](https://docs.unity3d.com/ScriptReference/)  
+- [Unity Transport Layer](https://docs.unity3d.com/Packages/com.unity.transport@0.3/api/Unity.Networking.Transport.html)
 
 ## How to Contribute
 Please send **valk#3277** a message over Discord.
