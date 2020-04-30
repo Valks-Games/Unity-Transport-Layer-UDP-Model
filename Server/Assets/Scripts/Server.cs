@@ -11,6 +11,7 @@ public class Server : MonoBehaviour
     public const string ADDRESS = "142.161.93.165";
     public const int PORT = 7777;
     public const int MAX_CONNECTIONS = 16;
+    public const int DISCONNECT_TIMEOUT = 30000;
 
     public NetworkDriver Driver;
     private NativeList<NetworkConnection> connections;
@@ -21,7 +22,7 @@ public class Server : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         // Creating Driver without any params
-        Driver = NetworkDriver.Create();
+        Driver = NetworkDriver.Create(new NetworkConfigParameter{disconnectTimeoutMS=DISCONNECT_TIMEOUT});
         var endpoint = NetworkEndPoint.AnyIpv4;
         endpoint.Port = PORT;
         if (Driver.Bind(endpoint) != 0)

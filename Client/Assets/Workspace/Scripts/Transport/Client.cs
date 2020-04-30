@@ -12,6 +12,7 @@ public class Client : MonoBehaviour
 {
     public const string ADDRESS = "142.161.93.165";
     public const int PORT = 7777;
+    public const int DISCONNECT_TIMEOUT = 30000;
 
     public NetworkDriver Driver;
     public NetworkConnection Connection;
@@ -20,7 +21,7 @@ public class Client : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
 
-        Driver = NetworkDriver.Create();
+        Driver = NetworkDriver.Create(new NetworkConfigParameter{disconnectTimeoutMS = DISCONNECT_TIMEOUT});
         Connection = default(NetworkConnection);
     }
 
