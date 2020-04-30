@@ -47,25 +47,19 @@ public class Client : MonoBehaviour
             {
                 Debug.Log("We are now connected to the server.");
 
-                uint value = 1;
                 var writer = Driver.BeginSend(Connection);
 
-                byte[] type = BitConverter.GetBytes(0);
-                byte[] x = BitConverter.GetBytes(100);
-                byte[] y = BitConverter.GetBytes(500);
-                byte[] z = BitConverter.GetBytes(30);
+                Vector3 pos = new Vector3(100, 500, 30);
 
-                List<byte> bytes = new List<byte>();
-                bytes.AddRange(type);
-                bytes.AddRange(x);
-                bytes.AddRange(y);
-                bytes.AddRange(z);
+                byte[] buffer = new byte[16];
+                buffer[0] = 5; // Position Data
+                BitConverter.GetBytes(pos.x).CopyTo(buffer, 1);
+                BitConverter.GetBytes(pos.y).CopyTo(buffer, 5);
+                BitConverter.GetBytes(pos.z).CopyTo(buffer, 9);
 
-                var array = new NativeArray<byte>(bytes.ToArray(), Allocator.Persistent);
+                var array = new NativeArray<byte>(buffer, Allocator.Temp);
 
                 writer.WriteBytes(array);
-
-                writer.WriteUInt(value);
                 Driver.EndSend(writer);
             } else if (cmd == NetworkEvent.Type.Data) 
             {

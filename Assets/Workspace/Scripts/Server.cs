@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+
+using UnityEngine;
 using UnityEngine.Assertions;
 
 using Unity.Collections;
@@ -67,14 +69,23 @@ public class Server : MonoBehaviour
             {
                 if (cmd == NetworkEvent.Type.Data) 
                 {
-                    // Read the uint from the stream
-                    uint number = streamReader.ReadUInt();
-                    Debug.Log("Got " + number + " from the Client adding + 2 to it.");
-                    number += 2;
+                    byte[] bytes = new byte[16]; // Could not think of a better name
+                    var array = new NativeArray<byte>(bytes, Allocator.Temp);
 
-                    var writer = Driver.BeginSend(NetworkPipeline.Null, connections[i]);
+                    streamReader.ReadBytes(array);
+
+                    byte[] recBuffer = array.ToArray();
+
+                    if (recBuffer[0] == 5) // Position Data
+                    {
+                        Debug.Log(BitConverter.ToSingle(recBuffer, 1));
+                        Debug.Log(BitConverter.ToSingle(recBuffer, 5));
+                        Debug.Log(BitConverter.ToSingle(recBuffer, 9));
+                    }
+
+                    /*var writer = Driver.BeginSend(NetworkPipeline.Null, connections[i]);
                     writer.WriteUInt(number);
-                    Driver.EndSend(writer);
+                    Driver.EndSend(writer);*/
                 } else if (cmd == NetworkEvent.Type.Disconnect) 
                 {
                     Debug.Log("Client diconnected from the server.");
