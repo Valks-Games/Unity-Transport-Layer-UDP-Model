@@ -51,15 +51,15 @@ public class Console : MonoBehaviour
 
         ConsoleMessages.Add(goText, lines); // Add message to list, this will effect ConsoleMessages.Count
 
-        Debug.Log(lines);
-        Debug.Log(ConsoleMessages.Count);
+        //Debug.Log(lines);
+        //Debug.Log(ConsoleMessages.Count);
 
         // Offset text
-        goText.transform.Translate(new Vector3(0, (MESSAGE_HEIGHT / 2) + ((-MESSAGE_HEIGHT / 2) * (lines - 1)) + (-MESSAGE_HEIGHT * ConsoleMessages.Count), 0));
+        goText.transform.Translate(new Vector3(0, MESSAGE_HEIGHT + (-MESSAGE_HEIGHT * AllLinesCount()) + (-MESSAGE_HEIGHT/2) * lines, 0));
         // Resize text
         goTextRect.sizeDelta = new Vector2(0, MESSAGE_HEIGHT * lines);
         // Resize content box
-        ContentRectTransform.sizeDelta = new Vector2(0, MESSAGE_HEIGHT * (ConsoleMessages.Count + lines - 1));
+        ContentRectTransform.sizeDelta = new Vector2(0, MESSAGE_HEIGHT * AllLinesCount() + (MESSAGE_HEIGHT/2) * lines);
 
         ResetInput();
         FocusInput();
@@ -76,14 +76,15 @@ public class Console : MonoBehaviour
         return lines;
     }
 
-    /*int GetHeight() 
+    int AllLinesCount() 
     {
         int height = 0;
-        for (int i = 0; i < ConsoleMessages.Count; i++) 
+        foreach (var item in ConsoleMessages) 
         {
-            
+            height += item.Value;
         }
-    }*/
+        return height;
+    }
 
     public void HandleInput() 
     {
