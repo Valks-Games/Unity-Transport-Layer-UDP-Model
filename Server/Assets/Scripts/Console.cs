@@ -18,7 +18,8 @@ public class Console : MonoBehaviour
     private ScrollRect UIScrollRect;
     private InputField UIInputField;
     private RectTransform ContentRectTransform;
-    private List<GameObject> ConsoleMessages = new List<GameObject>();
+    //private List<GameObject> ConsoleMessages = new List<GameObject>();
+    private Dictionary<GameObject, int> ConsoleMessages = new Dictionary<GameObject, int>();
 
     void Awake() 
     {
@@ -48,19 +49,17 @@ public class Console : MonoBehaviour
         
         int lines = CalcLines(text.preferredWidth, goTextRect.rect.width);
 
-        // Offset text
-        Debug.Log(ConsoleMessages.Count);
-        Debug.Log(lines);
-        goText.transform.Translate(new Vector3(0, -20 * (ConsoleMessages.Count + lines), 0));
-        // Resize text
-        goTextRect.sizeDelta = new Vector2(goTextRect.sizeDelta.x, 20 * lines);
+        ConsoleMessages.Add(goText, lines); // Add message to list, this will effect ConsoleMessages.Count
 
-        // Offset content box
-        ContentRectTransform.Translate(new Vector3(0, -20 / 2 * (ConsoleMessages.Count + lines), 0));
+        Debug.Log(lines);
+        Debug.Log(ConsoleMessages.Count);
+
+        // Offset text
+        goText.transform.Translate(new Vector3(0, (MESSAGE_HEIGHT / 2) + ((-MESSAGE_HEIGHT / 2) * (lines - 1)) + (-MESSAGE_HEIGHT * ConsoleMessages.Count), 0));
+        // Resize text
+        goTextRect.sizeDelta = new Vector2(0, MESSAGE_HEIGHT * lines);
         // Resize content box
-        ContentRectTransform.sizeDelta = new Vector2(0, (20 * (ConsoleMessages.Count + lines)));
-        
-        ConsoleMessages.Add(goText); // Add message to list
+        ContentRectTransform.sizeDelta = new Vector2(0, MESSAGE_HEIGHT * (ConsoleMessages.Count + lines - 1));
 
         ResetInput();
         FocusInput();
@@ -76,6 +75,15 @@ public class Console : MonoBehaviour
         }
         return lines;
     }
+
+    /*int GetHeight() 
+    {
+        int height = 0;
+        for (int i = 0; i < ConsoleMessages.Count; i++) 
+        {
+            
+        }
+    }*/
 
     public void HandleInput() 
     {
@@ -118,6 +126,7 @@ public class Console : MonoBehaviour
             if (!Server.IsRunning()) 
             {
                 Server.StartServer();
+                Log("Server is up and running!");
             } 
             else 
             {
@@ -128,6 +137,7 @@ public class Console : MonoBehaviour
             if (Server.IsRunning()) 
             {
                 Server.StopServer();
+                Log("Stopped server.");
             } 
             else 
             {
@@ -142,6 +152,7 @@ public class Console : MonoBehaviour
             {
                 Server.StopServer();
                 Server.StartServer();
+                Log("Restarted server successfully.");
             }
             break;
             case "exit":

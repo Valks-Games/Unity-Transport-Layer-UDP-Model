@@ -25,20 +25,20 @@ public class Server : MonoBehaviour
 
     void Start()
     {
-        Application.targetFrameRate = 60;
+        Application.targetFrameRate = 30;
         DontDestroyOnLoad(gameObject);
 
         // for debugging lines
-        //Console.Log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        //Console.Log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        Console.Log("A");
+        Console.Log("B");
+        Console.Log("C");
+        Console.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
-        StartServer();
+        //StartServer();
     }
 
     public void StartServer() 
     {
-        Console.Log("Starting server...");
-
         // Creating Driver without any params
         Driver = NetworkDriver.Create();
         var endpoint = NetworkEndPoint.AnyIpv4;
@@ -53,14 +53,11 @@ public class Server : MonoBehaviour
         }
         
         connections = new NativeList<NetworkConnection>(MAX_CONNECTIONS, Allocator.Persistent);
-
-        Console.Log("Server is up and running!");
     }
 
     public void StopServer() 
     {
         Driver.Dispose();
-        Console.Log("Stopped server.");
     }
 
     public bool IsRunning()
@@ -70,9 +67,12 @@ public class Server : MonoBehaviour
 
     void OnDestroy() 
     {
-        // Clear up unmanaged memory on destroy
-        Driver.Dispose();
-        connections.Dispose();
+        if (Driver.IsCreated) 
+        {
+            // Clear up unmanaged memory on destroy
+            Driver.Dispose();
+            connections.Dispose();
+        }
     }
 
     void Update()
