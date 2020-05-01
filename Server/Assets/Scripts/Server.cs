@@ -27,18 +27,13 @@ public class Server : MonoBehaviour
     {
         Application.targetFrameRate = 30;
         DontDestroyOnLoad(gameObject);
-
-        // for debugging lines
-        Console.Log("A");
-        Console.Log("B");
-        Console.Log("C");
-        Console.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-
-        //StartServer();
+        StartServer();
     }
 
     public void StartServer() 
     {
+        Console.Log("Starting server..");
+
         // Creating Driver without any params
         Driver = NetworkDriver.Create();
         var endpoint = NetworkEndPoint.AnyIpv4;
@@ -53,11 +48,14 @@ public class Server : MonoBehaviour
         }
         
         connections = new NativeList<NetworkConnection>(MAX_CONNECTIONS, Allocator.Persistent);
+
+        Console.Log("Server is up and running!");
     }
 
     public void StopServer() 
     {
         Driver.Dispose();
+        Console.Log("Stopped server.");
     }
 
     public bool IsRunning()

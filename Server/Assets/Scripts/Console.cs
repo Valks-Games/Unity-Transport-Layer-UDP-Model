@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.IO;
+using System.Reflection;
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -6,6 +9,7 @@ using UnityEngine.UI;
 
 public class Console : MonoBehaviour
 {
+    public Dictionary<string, Command> Commands = new Dictionary<string, Command>();
     public const int MESSAGE_HEIGHT = 20;
     public const float PADDING = 50.5f;
 
@@ -18,27 +22,47 @@ public class Console : MonoBehaviour
     private ScrollRect UIScrollRect;
     private InputField UIInputField;
     private RectTransform ContentRectTransform;
-    //private List<GameObject> ConsoleMessages = new List<GameObject>();
     private Dictionary<GameObject, int> ConsoleMessages = new Dictionary<GameObject, int>();
 
-    void Awake() 
+    void Awake()
     {
         Server = GoServer.GetComponent<Server>();
         UIInputField = GoInput.GetComponent<InputField>();
         ContentRectTransform = GoContent.GetComponent<RectTransform>();
+
+        /*DirectoryInfo dir = new DirectoryInfo(Application.dataPath + "/Scripts/Commands");
+        FileInfo[] files = dir.GetFiles("*.cs");
+        foreach (FileInfo file in files)
+        {
+            string name = Path.GetFileNameWithoutExtension(file.Name).ToLower();
+            if (!name.Equals("command")) {
+                Type t = Type.GetType(name);
+                Commands.Add(name, new Activator.CreateInstance(t));
+            }
+        }*/
+
+        Commands.Add("broadcast", new Broadcast());
+        Commands.Add("exit", new Exit());
+        Commands.Add("help", new Help());
+        Commands.Add("kick", new Kick());
+        Commands.Add("list", new List());
+        Commands.Add("restart", new Restart());
+        Commands.Add("start", new Start());
+        Commands.Add("status", new Status());
+        Commands.Add("stop", new Stop());
     }
 
-    void Start() 
+    void Start()
     {
         FocusInput();
     }
 
-    public void Log(string message) 
+    public void Log(string message)
     {
         Log(message, new Color(0.6f, 0.6f, 0.6f, 1.0f));
     }
 
-    public void Log(string message, Color color) 
+    public void Log(string message, Color color)
     {
         GameObject goText = Instantiate(GoTextPrefab, GoContent.transform);
         RectTransform goTextRect = goText.GetComponent<RectTransform>();
@@ -46,29 +70,22 @@ public class Console : MonoBehaviour
 
         text.text = message;
         text.color = color;
-        
+
         int lines = CalcLines(text.preferredWidth, goTextRect.rect.width);
 
         ConsoleMessages.Add(goText, lines); // Add message to list, this will effect ConsoleMessages.Count
 
-        //Debug.Log(lines);
-        //Debug.Log(ConsoleMessages.Count);
-
-        // Offset text
-        goText.transform.Translate(new Vector3(0, MESSAGE_HEIGHT + (-MESSAGE_HEIGHT * AllLinesCount()) + (-MESSAGE_HEIGHT/2) * lines, 0));
-        // Resize text
-        goTextRect.sizeDelta = new Vector2(0, MESSAGE_HEIGHT * lines);
         // Resize content box
-        ContentRectTransform.sizeDelta = new Vector2(0, MESSAGE_HEIGHT * AllLinesCount() + (MESSAGE_HEIGHT/2) * lines);
+        ContentRectTransform.sizeDelta = new Vector2(0, MESSAGE_HEIGHT * AllLinesCount() + (MESSAGE_HEIGHT / 2) * lines);
 
         ResetInput();
         FocusInput();
     }
 
-    int CalcLines(float contentWidth, float lineWidth) 
+    int CalcLines(float contentWidth, float lineWidth)
     {
         int lines = 1;
-        while (contentWidth > lineWidth) 
+        while (contentWidth > lineWidth)
         {
             contentWidth -= lineWidth;
             lines++;
@@ -76,113 +93,52 @@ public class Console : MonoBehaviour
         return lines;
     }
 
-    int AllLinesCount() 
+    int AllLinesCount()
     {
         int height = 0;
-        foreach (var item in ConsoleMessages) 
+        foreach (var item in ConsoleMessages)
         {
             height += item.Value;
         }
         return height;
     }
 
-    public void HandleInput() 
+    public void HandleInput()
     {
         if (!Input.GetKeyDown(KeyCode.Return))
             return;
-        
-        string input = UIInputField.text;
-        string[] args = input.ToLower().Split();
 
-        switch (args[0])
+        string[] args = UIInputField.text.ToLower().Split();
+        string cmd = args[0];
+
+        if (Commands.ContainsKey(cmd))
         {
-            case "help":
-            Log("Commands: broadcast, list, kick, status, start, stop, restart, exit");
-            break;
-            case "broadcast":
-            // Broadcast message to game server. Alias: ['say']
-            break;
-            case "list":
-            // List all players in the server. Alias: ['players']
-            break;
-            case "kick":
-            if (args.Length <= 1) 
-            {
-                Log("Error: Command kick requires <user> to kick", new Color(1f, 0.75f, 0.75f, 1f));
-                return;
-            }
-
-            Log("Kicked " + args[0]);
-            break;
-            case "status":
-            if (Server.IsRunning()) 
-            {
-                Log("Server is online.");
-            } else 
-            {
-                Log("Server is offline.");
-            }
-            break;
-            case "start":
-            if (!Server.IsRunning()) 
-            {
-                Server.StartServer();
-                Log("Server is up and running!");
-            } 
-            else 
-            {
-                Log("Server is already running.", new Color(1f, 0.75f, 0.75f, 1f));
-            }
-            break;
-            case "stop":
-            if (Server.IsRunning()) 
-            {
-                Server.StopServer();
-                Log("Stopped server.");
-            } 
-            else 
-            {
-                Log("Server is not running.");
-            }
-            break;
-            case "restart":
-            if (!Server.IsRunning()) 
-            {
-                Log("Server needs to be running to restart.");
-            } else 
-            {
-                Server.StopServer();
-                Server.StartServer();
-                Log("Restarted server successfully.");
-            }
-            break;
-            case "exit":
-            Application.Quit();
-            break;
-            default:
-            if (!args[0].Equals("")) 
+            Commands[cmd].Run(args);
+        }
+        else
+        {
+            if (!cmd.Equals(""))
             {
                 Log("Error: Unknown command \"" + args[0] + "\"", new Color(1f, 0.75f, 0.75f, 1f));
             }
-            break;
         }
     }
 
-    void ResetInput() 
+    void ResetInput()
     {
         UIInputField.text = "";
         ContentRectTransform.anchoredPosition = new Vector2(10, -Screen.height + PADDING);
     }
 
-    void FocusInput() 
+    void FocusInput()
     {
         UIInputField.Select();
         UIInputField.ActivateInputField();
     }
 
-    void Update() 
+    void Update()
     {
-        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Escape)) 
+        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Escape))
         {
             FocusInput();
         }
