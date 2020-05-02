@@ -7,7 +7,8 @@ public class UIMainMenu : MonoBehaviour
 {
     public void Multiplayer() 
     {
-        SceneManager.LoadScene("Server Listings");
+        Client.Connect();
+        SceneManager.LoadScene("Connecting");
     }
 
     public void Options() 

@@ -12,6 +12,12 @@ EditorBuildSettings:
     path: Assets/Workspace/Scenes/Options.unity
     guid: 0a9bb6d8d9a179b4ea96deeeaa85da53
   - enabled: 1
+    path: Assets/Workspace/Scenes/Connecting.unity
+    guid: 8dae114fadac0e64bb1346752231ada7
+  - enabled: 1
+    path: Assets/Workspace/Scenes/Create Account.unity
+    guid: c335171d88a0b554c96e158d7c45cf8b
+  - enabled: 1
     path: Assets/Workspace/Scenes/Server Listings.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1

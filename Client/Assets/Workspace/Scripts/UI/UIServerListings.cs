@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class UIServerListings : MonoBehaviour
 {
-    public GameObject client;
-
     public void Connect() 
     {
-        client.GetComponent<Client>().Connect();
+        //client.GetComponent<Client>().Connect();
     }
 }

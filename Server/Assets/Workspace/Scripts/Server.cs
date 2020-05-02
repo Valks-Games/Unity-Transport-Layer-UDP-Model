@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -20,7 +21,7 @@ public class Server : MonoBehaviour
     public static NetworkDriver Driver;
     private static NativeList<NetworkConnection> connections;
 
-    void Awake() 
+    void Awake()
     {
         Console = GoConsole.GetComponent<Console>();
     }
@@ -28,15 +29,17 @@ public class Server : MonoBehaviour
     void Start()
     {
         Application.targetFrameRate = 30;
+        Application.runInBackground = true;
         DontDestroyOnLoad(gameObject);
         StartServer();
     }
 
-    public static void StartServer() 
+    public static void StartServer()
     {
         Console.Log("Starting server..");
 
-        var config = new NetworkConfigParameter {
+        var config = new NetworkConfigParameter
+        {
             connectTimeoutMS = CONNECT_TIMEOUT,
             disconnectTimeoutMS = DISCONNECT_TIMEOUT,
             maxConnectAttempts = MAX_CONNECTION_ATTEMPTS
@@ -45,32 +48,32 @@ public class Server : MonoBehaviour
         Driver = NetworkDriver.Create(config);
         var endpoint = NetworkEndPoint.AnyIpv4;
         endpoint.Port = PORT;
-        if (Driver.Bind(endpoint) != 0) 
+        if (Driver.Bind(endpoint) != 0)
         {
             Debug.Log("Failed to bind to port " + PORT);
         }
-        else 
+        else
         {
             Driver.Listen(); // Sets the NetworkDriver in the Listen state
         }
-        
+
         connections = new NativeList<NetworkConnection>(MAX_CONNECTIONS, Allocator.Persistent);
 
         Console.Log("Server is up and running!");
     }
 
-    public static void StopServer() 
+    public static void StopServer()
     {
         Driver.Dispose();
         Console.Log("Stopped server.");
     }
 
-    public static int ConnectionCount() 
+    public static int ConnectionCount()
     {
         return connections.Length;
     }
 
-    public static void Kick(int connectionID) 
+    public static void Kick(int connectionID)
     {
         connections[connectionID].Disconnect(Driver);
     }
@@ -80,9 +83,9 @@ public class Server : MonoBehaviour
         return Driver.IsCreated;
     }
 
-    void OnDestroy() 
+    void OnDestroy()
     {
-        if (Driver.IsCreated) 
+        if (Driver.IsCreated)
         {
             // Clear up unmanaged memory on destroy
             Driver.Dispose();
@@ -98,9 +101,9 @@ public class Server : MonoBehaviour
         Driver.ScheduleUpdate().Complete();
 
         // Clean up old connections
-        for (int i = 0; i < connections.Length; i++) 
+        for (int i = 0; i < connections.Length; i++)
         {
-            if (!connections[i].IsCreated) 
+            if (!connections[i].IsCreated)
             {
                 connections.RemoveAtSwapBack(i);
                 --i;
@@ -118,14 +121,15 @@ public class Server : MonoBehaviour
 
         // Query Driver for events that might have happened since last update
         DataStreamReader streamReader;
-        for (int i = 0; i < connections.Length; i++) {
+        for (int i = 0; i < connections.Length; i++)
+        {
             if (!connections[i].IsCreated)
                 continue;
-            
+
             NetworkEvent.Type cmd;
-            while ((cmd = Driver.PopEventForConnection(connections[i], out streamReader)) != NetworkEvent.Type.Empty) 
+            while ((cmd = Driver.PopEventForConnection(connections[i], out streamReader)) != NetworkEvent.Type.Empty)
             {
-                if (cmd == NetworkEvent.Type.Data) 
+                if (cmd == NetworkEvent.Type.Data)
                 {
                     byte[] recBuffer = new byte[streamReader.Length];
                     var array = new NativeArray<byte>(recBuffer, Allocator.Temp);
@@ -133,17 +137,33 @@ public class Server : MonoBehaviour
                     streamReader.ReadBytes(array);
                     recBuffer = array.ToArray();
 
-                    if (recBuffer[0] == 5) // Position Data
+                    if (recBuffer[0] == 0) // Heart beat
+                    {
+                        Debug.Log("Received heart beat from " + connections[i].InternalId);
+
+                        var writer = Driver.BeginSend(NetworkPipeline.Null, connections[i]);
+
+                        byte[] buffer = new byte[8];
+                        buffer[0] = 0; // Heart Beat (Hey server! I'm still alive! Don't kick me!)
+
+                        var arr = new NativeArray<byte>(buffer, Allocator.Temp);
+
+                        writer.WriteBytes(arr);
+                        Driver.EndSend(writer);
+                    } else if (recBuffer[0] == 1) { // Login Information
+                        Debug.Log(Encoding.ASCII.GetString(recBuffer, 1, recBuffer.Length - 1));
+                    } else if (recBuffer[0] == 5) // Position Data
                     {
                         Debug.Log(BitConverter.ToSingle(recBuffer, 1));
                         Debug.Log(BitConverter.ToSingle(recBuffer, 5));
                         Debug.Log(BitConverter.ToSingle(recBuffer, 9));
                     }
 
-                    var writer = Driver.BeginSend(NetworkPipeline.Null, connections[i]);
+                    /*var writer = Driver.BeginSend(NetworkPipeline.Null, connections[i]);
                     writer.WriteUInt(1);
-                    Driver.EndSend(writer);
-                } else if (cmd == NetworkEvent.Type.Disconnect) 
+                    Driver.EndSend(writer);*/
+                }
+                else if (cmd == NetworkEvent.Type.Disconnect)
                 {
                     Debug.Log("Client diconnected from the server.");
                     Console.Log(c.InternalId + " disconnected");
