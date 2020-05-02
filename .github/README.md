@@ -3,6 +3,7 @@ Learning the Unity Transport Layer in hopes of pursuing multiplayer game develop
 [CONTRIBUTING.md](https://github.com/valkyrienyanko/Prototype/blob/master/.github/CONTRIBUTING.md)
 
 ![Console](https://i.gyazo.com/5173dc03aa86564cfedec7f55ec16053.png)
+![Login](https://i.gyazo.com/6d7b9abeb02f3596877c7fa8c0c88c02.png)
 ![Client](https://i.gyazo.com/df4b695467adbe079ec15260aab64630.png)
 ![Connected](https://i.gyazo.com/9216feb880c78e75094e8c77d8abc80e.png)
 ![LogClient](https://i.gyazo.com/576f179fbc1ad459296a174eaf600a16.png)
