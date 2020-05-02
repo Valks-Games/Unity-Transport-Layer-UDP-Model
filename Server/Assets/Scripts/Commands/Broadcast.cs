@@ -1,3 +1,4 @@
+[Command("broadcast")]
 public class Broadcast : Command
 {
     public override void Run(string[] args) 

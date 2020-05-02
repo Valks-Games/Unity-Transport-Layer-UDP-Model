@@ -1,3 +1,4 @@
+[Command("status")]
 public class Status : Command
 {
     public override void Run(string[] args)

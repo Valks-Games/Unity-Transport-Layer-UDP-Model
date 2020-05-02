@@ -1,3 +1,4 @@
+[Command("stop")]
 public class Stop : Command
 {
     public override void Run(string[] args)

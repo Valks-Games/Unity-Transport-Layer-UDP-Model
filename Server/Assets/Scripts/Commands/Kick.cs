@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[Command("kick")]
 public class Kick : Command
 {
     public override void Run(string[] args) 

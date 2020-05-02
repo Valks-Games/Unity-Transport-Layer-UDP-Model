@@ -1,3 +1,4 @@
+[Command("list")]
 public class List : Command
 {
     public override void Run(string[] args) 

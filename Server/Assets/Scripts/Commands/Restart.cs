@@ -1,3 +1,4 @@
+[Command("restart")]
 public class Restart : Command
 {
     public override void Run(string[] args)

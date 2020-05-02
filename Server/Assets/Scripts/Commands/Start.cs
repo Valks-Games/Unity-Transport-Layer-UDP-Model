@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[Command("start")]
 public class Start : Command
 {
     public override void Run(string[] args)
