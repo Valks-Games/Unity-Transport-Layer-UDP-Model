@@ -62,3 +62,6 @@ crashlytics-build.properties
 .vscode/
 *.csproj
 *.sln
+
+# Msc
+Secrets.txt

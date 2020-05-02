@@ -10,13 +10,15 @@ public class Server : MonoBehaviour
 {
     public const int PORT = 7777;
     public const int MAX_CONNECTIONS = 16;
-    public const int DISCONNECT_TIMEOUT = 30000;
+    public const int DISCONNECT_TIMEOUT = 3000;
+    public const int CONNECT_TIMEOUT = 3000;
+    public const int MAX_CONNECTION_ATTEMPTS = 3;
 
     public GameObject GoConsole;
     private Console Console;
 
-    public NetworkDriver Driver;
-    private NativeList<NetworkConnection> connections;
+    public static NetworkDriver Driver;
+    private static NativeList<NetworkConnection> connections;
 
     void Awake() 
     {
@@ -30,12 +32,17 @@ public class Server : MonoBehaviour
         StartServer();
     }
 
-    public void StartServer() 
+    public static void StartServer() 
     {
         Console.Log("Starting server..");
 
-        // Creating Driver without any params
-        Driver = NetworkDriver.Create();
+        var config = new NetworkConfigParameter {
+            connectTimeoutMS = CONNECT_TIMEOUT,
+            disconnectTimeoutMS = DISCONNECT_TIMEOUT,
+            maxConnectAttempts = MAX_CONNECTION_ATTEMPTS
+        };
+
+        Driver = NetworkDriver.Create(config);
         var endpoint = NetworkEndPoint.AnyIpv4;
         endpoint.Port = PORT;
         if (Driver.Bind(endpoint) != 0) 
@@ -52,13 +59,23 @@ public class Server : MonoBehaviour
         Console.Log("Server is up and running!");
     }
 
-    public void StopServer() 
+    public static void StopServer() 
     {
         Driver.Dispose();
         Console.Log("Stopped server.");
     }
 
-    public bool IsRunning()
+    public static int ConnectionCount() 
+    {
+        return connections.Length;
+    }
+
+    public static void Kick(int connectionID) 
+    {
+        connections[connectionID].Disconnect(Driver);
+    }
+
+    public static bool IsRunning()
     {
         return Driver.IsCreated;
     }
@@ -114,7 +131,6 @@ public class Server : MonoBehaviour
                     var array = new NativeArray<byte>(recBuffer, Allocator.Temp);
 
                     streamReader.ReadBytes(array);
-                    Debug.Log("ID: " + connections[0].InternalId);
                     recBuffer = array.ToArray();
 
                     if (recBuffer[0] == 5) // Position Data
@@ -124,9 +140,9 @@ public class Server : MonoBehaviour
                         Debug.Log(BitConverter.ToSingle(recBuffer, 9));
                     }
 
-                    /*var writer = Driver.BeginSend(NetworkPipeline.Null, connections[i]);
-                    writer.WriteUInt(number);
-                    Driver.EndSend(writer);*/
+                    var writer = Driver.BeginSend(NetworkPipeline.Null, connections[i]);
+                    writer.WriteUInt(1);
+                    Driver.EndSend(writer);
                 } else if (cmd == NetworkEvent.Type.Disconnect) 
                 {
                     Debug.Log("Client diconnected from the server.");

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -10,7 +11,7 @@ using Unity.Networking.Transport;
 
 public class Client : MonoBehaviour
 {
-    public const string ADDRESS = "142.161.93.165";
+    public const string ADDRESS = "142.160.69.144";
     public const int PORT = 7777;
     public const int DISCONNECT_TIMEOUT = 30000;
 
@@ -53,26 +54,14 @@ public class Client : MonoBehaviour
 
                 SceneManager.LoadScene("Main");
 
-                var writer = Driver.BeginSend(Connection);
-                Vector3 pos = new Vector3(100, 500, 30);
-
-                byte[] buffer = new byte[16];
-                buffer[0] = 5; // Position Data
-                BitConverter.GetBytes(pos.x).CopyTo(buffer, 1);
-                BitConverter.GetBytes(pos.y).CopyTo(buffer, 5);
-                BitConverter.GetBytes(pos.z).CopyTo(buffer, 9);
-
-                var array = new NativeArray<byte>(buffer, Allocator.Temp);
-
-                writer.WriteBytes(array);
-                Driver.EndSend(writer);
+                StartCoroutine(DataPump());
             }
             else if (cmd == NetworkEvent.Type.Data)
             {
-                /*uint value = stream.ReadUInt();
+                uint value = stream.ReadUInt();
                 Debug.Log("Got the value = " + value + " back from the server.");
-                Connection.Disconnect(Driver);
-                Connection = default(NetworkConnection); // Reset connection*/
+                //Connection.Disconnect(Driver);
+                //Connection = default(NetworkConnection); // Reset connection*/
             }
             else if (cmd == NetworkEvent.Type.Disconnect)
             {
@@ -81,6 +70,28 @@ public class Client : MonoBehaviour
 
                 SceneManager.LoadScene("Server Listings");
             }
+        }
+    }
+
+    IEnumerator DataPump()
+    {
+        while (Connection.IsCreated)
+        {
+            var writer = Driver.BeginSend(Connection);
+            Vector3 pos = new Vector3(100, 500, 30);
+
+            byte[] buffer = new byte[16];
+            buffer[0] = 5; // Position Data
+            BitConverter.GetBytes(pos.x).CopyTo(buffer, 1);
+            BitConverter.GetBytes(pos.y).CopyTo(buffer, 5);
+            BitConverter.GetBytes(pos.z).CopyTo(buffer, 9);
+
+            var array = new NativeArray<byte>(buffer, Allocator.Temp);
+
+            writer.WriteBytes(array);
+            Driver.EndSend(writer);
+
+            yield return new WaitForSeconds(1f);
         }
     }
 }

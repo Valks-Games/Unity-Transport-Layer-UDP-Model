@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
-using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -14,42 +13,24 @@ public class Console : MonoBehaviour
     public const float PADDING = 50.5f;
 
     public GameObject GoServer;
-    public GameObject GoContent;
-    public GameObject GoTextPrefab;
+    public static GameObject GoContent;
+    public static GameObject GoTextPrefab;
     public GameObject GoInput;
 
     private Server Server;
     private ScrollRect UIScrollRect;
-    private InputField UIInputField;
-    private RectTransform ContentRectTransform;
-    private Dictionary<GameObject, int> ConsoleMessages = new Dictionary<GameObject, int>();
+    private static InputField UIInputField;
+    private static RectTransform ContentRectTransform;
+    private static Dictionary<GameObject, int> ConsoleMessages = new Dictionary<GameObject, int>();
 
     void Awake()
     {
+        Commands = typeof(Command).Assembly.GetTypes().Where(x => typeof(Command).IsAssignableFrom(x) && !x.IsAbstract).Select(Activator.CreateInstance).Cast<Command>().ToDictionary(x => x.GetType().Name.ToLower(), x => x);
+        GoContent = GameObject.Find("Content");
+        GoTextPrefab = Resources.Load("Text") as GameObject;
         Server = GoServer.GetComponent<Server>();
         UIInputField = GoInput.GetComponent<InputField>();
         ContentRectTransform = GoContent.GetComponent<RectTransform>();
-
-        /*DirectoryInfo dir = new DirectoryInfo(Application.dataPath + "/Scripts/Commands");
-        FileInfo[] files = dir.GetFiles("*.cs");
-        foreach (FileInfo file in files)
-        {
-            string name = Path.GetFileNameWithoutExtension(file.Name).ToLower();
-            if (!name.Equals("command")) {
-                Type t = Type.GetType(name);
-                Commands.Add(name, new Activator.CreateInstance(t));
-            }
-        }*/
-
-        Commands.Add("broadcast", new Broadcast());
-        Commands.Add("exit", new Exit());
-        Commands.Add("help", new Help());
-        Commands.Add("kick", new Kick());
-        Commands.Add("list", new List());
-        Commands.Add("restart", new Restart());
-        Commands.Add("start", new Start());
-        Commands.Add("status", new Status());
-        Commands.Add("stop", new Stop());
     }
 
     void Start()
@@ -57,12 +38,17 @@ public class Console : MonoBehaviour
         FocusInput();
     }
 
-    public void Log(string message)
+    public static void Error(string message)
+    {
+        Log(message, new Color(1f, 0.75f, 0.75f, 1f));
+    }
+
+    public static void Log(string message)
     {
         Log(message, new Color(0.6f, 0.6f, 0.6f, 1.0f));
     }
 
-    public void Log(string message, Color color)
+    public static void Log(string message, Color color)
     {
         GameObject goText = Instantiate(GoTextPrefab, GoContent.transform);
         RectTransform goTextRect = goText.GetComponent<RectTransform>();
@@ -72,17 +58,17 @@ public class Console : MonoBehaviour
         text.color = color;
 
         int lines = CalcLines(text.preferredWidth, goTextRect.rect.width);
+        ConsoleMessages.Add(goText, lines);
 
-        ConsoleMessages.Add(goText, lines); // Add message to list, this will effect ConsoleMessages.Count
+        goText.name = "Message " + ConsoleMessages.Count;
 
-        // Resize content box
         ContentRectTransform.sizeDelta = new Vector2(0, MESSAGE_HEIGHT * AllLinesCount() + (MESSAGE_HEIGHT / 2) * lines);
 
         ResetInput();
         FocusInput();
     }
 
-    int CalcLines(float contentWidth, float lineWidth)
+    static int CalcLines(float contentWidth, float lineWidth)
     {
         int lines = 1;
         while (contentWidth > lineWidth)
@@ -93,7 +79,7 @@ public class Console : MonoBehaviour
         return lines;
     }
 
-    int AllLinesCount()
+    static int AllLinesCount()
     {
         int height = 0;
         foreach (var item in ConsoleMessages)
@@ -119,18 +105,18 @@ public class Console : MonoBehaviour
         {
             if (!cmd.Equals(""))
             {
-                Log("Error: Unknown command \"" + args[0] + "\"", new Color(1f, 0.75f, 0.75f, 1f));
+                Error("Error: Unknown command \"" + args[0] + "\"");
             }
         }
     }
 
-    void ResetInput()
+    static void ResetInput()
     {
         UIInputField.text = "";
         ContentRectTransform.anchoredPosition = new Vector2(10, -Screen.height + PADDING);
     }
 
-    void FocusInput()
+    static void FocusInput()
     {
         UIInputField.Select();
         UIInputField.ActivateInputField();
