@@ -7,5 +7,5 @@ Learning the Unity Transport Layer in hopes of pursuing multiplayer game develop
 ![Client](https://i.gyazo.com/df4b695467adbe079ec15260aab64630.png)
 ![Connecting](PREVIEW/Connecting.gif)
 ![Connected](https://i.gyazo.com/9216feb880c78e75094e8c77d8abc80e.png)
-![LogClient](https://i.gyazo.com/576f179fbc1ad459296a174eaf600a16.png)
-![LogServer](https://i.gyazo.com/25d24b42880654aee623d4f231efe714.png)
+![ClientDebug](PREVIEW/ClientDebug.gif)
+![ServerDebug](PREVIEW/ServerDebug.gif)
