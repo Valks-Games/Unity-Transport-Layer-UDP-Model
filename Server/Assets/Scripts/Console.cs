@@ -9,7 +9,6 @@ using UnityEngine.UI;
 
 public class Console : MonoBehaviour
 {
-    public Dictionary<string, Command> Commands = new Dictionary<string, Command>();
     public const int MESSAGE_HEIGHT = 20;
     public const float PADDING = 50.5f;
 
@@ -24,32 +23,23 @@ public class Console : MonoBehaviour
     private RectTransform ContentRectTransform;
     private Dictionary<GameObject, int> ConsoleMessages = new Dictionary<GameObject, int>();
 
+    /// <summary>
+    /// Gets the current command manager for this console.
+    /// </summary>
+    public CommandManager CommandManager { get; } = new CommandManager();
+
     void Awake()
     {
         Server = GoServer.GetComponent<Server>();
         UIInputField = GoInput.GetComponent<InputField>();
         ContentRectTransform = GoContent.GetComponent<RectTransform>();
 
-        /*DirectoryInfo dir = new DirectoryInfo(Application.dataPath + "/Scripts/Commands");
-        FileInfo[] files = dir.GetFiles("*.cs");
-        foreach (FileInfo file in files)
-        {
-            string name = Path.GetFileNameWithoutExtension(file.Name).ToLower();
-            if (!name.Equals("command")) {
-                Type t = Type.GetType(name);
-                Commands.Add(name, new Activator.CreateInstance(t));
-            }
-        }*/
-
-        Commands.Add("broadcast", new Broadcast());
-        Commands.Add("exit", new Exit());
-        Commands.Add("help", new Help());
-        Commands.Add("kick", new Kick());
-        Commands.Add("list", new List());
-        Commands.Add("restart", new Restart());
-        Commands.Add("start", new Start());
-        Commands.Add("status", new Status());
-        Commands.Add("stop", new Stop());
+        // keep note: reflection is very slow!
+        // if you implement dozens and dozens of command, this particular method call will get very expensive.
+        // there is nothing that can be done about this. while reflection is very powerful, it's also very inefficient.
+        // I recommend you research some pros/cons about reflection in general, and decide for yourself if this is
+        // something you want to do
+        this.CommandManager.RegisterAssemblyCommands();
     }
 
     void Start()
@@ -111,16 +101,9 @@ public class Console : MonoBehaviour
         string[] args = UIInputField.text.ToLower().Split();
         string cmd = args[0];
 
-        if (Commands.ContainsKey(cmd))
+        if (!string.IsNullOrWhiteSpace(cmd) && !this.CommandManager.TryRunCommand(cmd, args))
         {
-            Commands[cmd].Run(args);
-        }
-        else
-        {
-            if (!cmd.Equals(""))
-            {
-                Log("Error: Unknown command \"" + args[0] + "\"", new Color(1f, 0.75f, 0.75f, 1f));
-            }
+            Log("Error: Unknown command \"" + args[0] + "\"", new Color(1f, 0.75f, 0.75f, 1f));
         }
     }
 
