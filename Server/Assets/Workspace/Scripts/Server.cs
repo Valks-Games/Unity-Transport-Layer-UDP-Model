@@ -15,16 +15,8 @@ public class Server : MonoBehaviour
     public const int CONNECT_TIMEOUT = 3000;
     public const int MAX_CONNECTION_ATTEMPTS = 3;
 
-    public GameObject GoConsole;
-    private Console Console;
-
     public static NetworkDriver Driver;
     private static NativeList<NetworkConnection> connections;
-
-    void Awake()
-    {
-        Console = GoConsole.GetComponent<Console>();
-    }
 
     void Start()
     {
@@ -137,31 +129,7 @@ public class Server : MonoBehaviour
                     streamReader.ReadBytes(array);
                     recBuffer = array.ToArray();
 
-                    if (recBuffer[0] == 0) // Heart beat
-                    {
-                        Debug.Log("Received heart beat from " + connections[i].InternalId);
-
-                        var writer = Driver.BeginSend(NetworkPipeline.Null, connections[i]);
-
-                        byte[] buffer = new byte[8];
-                        buffer[0] = 0; // Heart Beat (Hey server! I'm still alive! Don't kick me!)
-
-                        var arr = new NativeArray<byte>(buffer, Allocator.Temp);
-
-                        writer.WriteBytes(arr);
-                        Driver.EndSend(writer);
-                    } else if (recBuffer[0] == 1) { // Login Information
-                        Debug.Log(Encoding.ASCII.GetString(recBuffer, 1, recBuffer.Length - 1));
-                    } else if (recBuffer[0] == 5) // Position Data
-                    {
-                        Debug.Log(BitConverter.ToSingle(recBuffer, 1));
-                        Debug.Log(BitConverter.ToSingle(recBuffer, 5));
-                        Debug.Log(BitConverter.ToSingle(recBuffer, 9));
-                    }
-
-                    /*var writer = Driver.BeginSend(NetworkPipeline.Null, connections[i]);
-                    writer.WriteUInt(1);
-                    Driver.EndSend(writer);*/
+                    DataHandler.Data(Driver, connections, i, recBuffer);
                 }
                 else if (cmd == NetworkEvent.Type.Disconnect)
                 {
