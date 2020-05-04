@@ -31,6 +31,10 @@ public class DataHandler
         if (recBuffer[0] == 1)
         {
             string name = Encoding.ASCII.GetString(recBuffer, 1, recBuffer.Length - 1);
+
+            /*var user = new User{Name = name};
+            Save.LoadData().UserList.Count*/
+
             Save.SaveData(name);
         }
 

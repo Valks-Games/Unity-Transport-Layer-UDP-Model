@@ -3,5 +3,5 @@ using System.Collections.Generic;
 [System.Serializable]
 public class Users 
 {
-    public List<User> UserList = new List<User>();
+    public Dictionary<string, User> UserList = new Dictionary<string, User>();
 }

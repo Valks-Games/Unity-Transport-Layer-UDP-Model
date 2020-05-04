@@ -14,9 +14,9 @@ public class Save : MonoBehaviour
         if (users == null) 
         {
             users = new Users();
-            users.UserList.Add(new User{Name = name});
+            users.UserList.Add(name, new User{Name = name});
         } else {
-            users.UserList.Add(new User{Name = name});
+            users.UserList.Add(name, new User{Name = name});
         }
         
         var binaryFormatter = new BinaryFormatter();
