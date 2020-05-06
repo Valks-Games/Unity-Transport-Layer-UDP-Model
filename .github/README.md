@@ -1,8 +1,12 @@
-**Note that this project is being discontinued.**
+[![GitHub license](https://img.shields.io/github/license/valkyrienyanko/Unity-Transport-Layer-Dedicated-Server?color=brightgreen)](https://github.com/valkyrienyanko/Unity-Transport-Layer-Dedicated-Server/blob/master/LICENSE)
+[![Issues](https://img.shields.io/github/issues/valkyrienyanko/Unity-Transport-Layer-Dedicated-Server)](https://github.com/valkyrienyanko/Unity-Transport-Layer-Dedicated-Server/issues)
+[![Discord](https://img.shields.io/discord/453710350454620160.svg)](https://discordapp.com/invite/N9QVxbM)
+[![GitHub stars](https://img.shields.io/github/stars/valkyrienyanko/Unity-Transport-Layer-Dedicated-Server?color=brightgreen)](https://github.com/valkyrienyanko/Unity-Transport-Layer-Dedicated-Server/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/valkyrienyanko/Unity-Transport-Layer-Dedicated-Server?color=brightgreen)](https://github.com/valkyrienyanko/Unity-Transport-Layer-Dedicated-Server/network)
 
-Learning the Unity Transport Layer in hopes of pursuing multiplayer game development on a large modular scale.
+The downside to using this project is the server will have Unity overhead, other than that, everything seems to work flawlessly.
   
-[CONTRIBUTING.md](https://github.com/valkyrienyanko/Prototype/blob/master/.github/CONTRIBUTING.md)
+Read [this](https://github.com/valkyrienyanko/Prototype/blob/master/.github/CONTRIBUTING.md) if you're interested in contributing.
 
 ![Console](PREVIEW/Console.gif)
 ![Login](https://i.gyazo.com/6d7b9abeb02f3596877c7fa8c0c88c02.png)
