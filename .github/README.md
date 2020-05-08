@@ -1,6 +1,6 @@
 [![GitHub license](https://img.shields.io/github/license/valkyrienyanko/Unity-Transport-Layer-Dedicated-Server?color=brightgreen)](https://github.com/valkyrienyanko/Unity-Transport-Layer-Dedicated-Server/blob/master/LICENSE)
 [![Issues](https://img.shields.io/github/issues/valkyrienyanko/Unity-Transport-Layer-Dedicated-Server)](https://github.com/valkyrienyanko/Unity-Transport-Layer-Dedicated-Server/issues)
-[![Discord](https://img.shields.io/discord/453710350454620160.svg)](https://discordapp.com/invite/N9QVxbM)
+[![Discord](https://img.shields.io/discord/453710350454620160.svg)](https://discord.gg/thMupbv)
 [![GitHub stars](https://img.shields.io/github/stars/valkyrienyanko/Unity-Transport-Layer-Dedicated-Server?color=brightgreen)](https://github.com/valkyrienyanko/Unity-Transport-Layer-Dedicated-Server/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/valkyrienyanko/Unity-Transport-Layer-Dedicated-Server?color=brightgreen)](https://github.com/valkyrienyanko/Unity-Transport-Layer-Dedicated-Server/network)
 
